@@ -12,7 +12,7 @@ class Cache {
  private:
    // All internal data and functionality is hidden using the Pimpl idiom
    // (see here: https://www.fluentcpp.com/2017/09/22/make-pimpl-using-unique_ptr/)
-  class Impl;
+  struct Impl;
   std::unique_ptr<Impl> pImpl_;
 
  public:
