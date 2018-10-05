@@ -15,8 +15,10 @@ Cache::Cache(index_type maxmem,
             evictor_type evictor = [](){ return 0; },
             hash_func hasher = std::hash<std::string>()) : pImpl_ = (new Impl())
 {
+    // HOPE HERE IS TO MAKE A VECTOR OF K-V tuples, and then assign pImpl_ to point to this vector
+    // Current issue is the syntax of the vector
     newCache = 
-    pImpl_ -> myCache
+    pImpl_ -> &myCache;
 }
 
 Cache::~Cache() = default;
