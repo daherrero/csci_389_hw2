@@ -15,7 +15,7 @@ void Cache::set(key_type key, val_type val, index_type size)
     // Code Needed
 }
 
-Cache::val_type Cache::get(key_type key, index_t& val_size) const
+Cache::val_type Cache::get(key_type key, index_type& val_size) const
 {
     // Code Needed
 }
