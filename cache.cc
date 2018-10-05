@@ -8,7 +8,7 @@
 class Cache::Impl 
 {
     public:
-        std::vector< std::tuple < key_type , val_type> > const myCache;
+        std::vector< std::tuple < key_type , val_type> > myCache;
 };
 
 Cache::Cache(index_type maxmem, 
