@@ -2,13 +2,24 @@
 #include <functional>
 #include <memory>
 #include <string>
+#include <vector>
+#include <tuple>
+
+class Cache::Impl 
+{
+    public:
+        std::vector< std::tuple < key_type , val_type> > const myCache;
+};
 
 Cache::Cache(index_type maxmem, 
             evictor_type evictor = [](){ return 0; },
-            hash_func hasher = std::hash<std::string>())
+            hash_func hasher = std::hash<std::string>()) : pImpl_ = (new Impl())
 {
-    // INITIALIZER NEEDED HERE
+    newCache = 
+    pImpl_ -> myCache
 }
+
+Cache::~Cache() = default;
 
 void Cache::set(key_type key, val_type val, index_type size)
 {
