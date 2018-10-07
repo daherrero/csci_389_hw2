@@ -33,7 +33,7 @@ Cache::~Cache() = default;
 void Cache::set(key_type key, val_type val, index_type size)
 {   
     // For clarity, we change the
-    std::unordered_map<key_type,val_type> * the_cache = (pImpl_->my_cache_);
+    
     
     if ((pImpl_->my_curmem_ + size) <= pImpl_-> my_maxmem_)
     {
