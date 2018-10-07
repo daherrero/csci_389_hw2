@@ -8,7 +8,7 @@
 class Cache::Impl 
 {
     public:
-        std::unordered_map<key_type,val_type> * my_cache_;
+        std::unordered_map<key_type,val_type> my_cache_;
         static index_type my_maxmem_;
         evictor_type my_evictor_;
         hash_func my_hasher_;
@@ -20,7 +20,7 @@ Cache::Cache(index_type maxmem,
             hash_func hasher): pImpl_(new Impl())
 {
     // HOPE HERE IS TO MAKE A VECTOR OF K-V tuples, and then assign pImpl_ to point to this vector
-    std::unordered_map<key_type,val_type> * newCache = new std::unordered_map<key_type,val_type>;
+    std::unordered_map<key_type,val_type> newCache;
     pImpl_ -> my_cache_ = newCache;
     pImpl_ -> my_evictor_ = evictor;
     pImpl_ -> my_maxmem_ = maxmem;
@@ -32,22 +32,26 @@ Cache::~Cache() = default;
 
 void Cache::set(key_type key, val_type val, index_type size)
 {   
-    // For clarity, we change the
-    
-    
-    if ((pImpl_->my_curmem_ + size) <= pImpl_-> my_maxmem_)
+    if (((pImpl_->my_curmem_) + size) <= (pImpl_-> my_maxmem_))
     {
-        *(pImpl_->my_cache_).insert_or_assign(key,val);
+        (pImpl_->my_cache_).insert_or_assign(key,val);
+        (pImpl_->my_curmem_)+=size;
+    } else {
+        while (((pImpl_->my_curmem_) + size) <= (pImpl_-> my_maxmem_))
+        {
+            auto it = (pImpl_->my_cache_).begin();
+            (pImpl_->my_cache_).erase(it);
+        }
+        (pImpl_->my_cache_).insert_or_assign(key,val);
+        (pImpl_->my_curmem_)+=size;
     }
 }
 
 Cache::val_type Cache::get(key_type key, index_type& val_size) const
 {
-    std::unordered_map<key_type,val_type> * the_cache = (pImpl_->my_cache_);
-    auto search = (*the_cache).find(key);
-    if (search != (*the_cache).end()) {
-        val_type val_address = &(search->second);
-        return val_address;
+    auto search = (pImpl_->my_cache_).find(key);
+    if (search != (pImpl_->my_cache_).end()) {
+        return &(search->second);
     } else {
         return NULL;
     }
@@ -55,10 +59,11 @@ Cache::val_type Cache::get(key_type key, index_type& val_size) const
 
 void Cache::del(key_type key)
 {
-    // Code Needed
+    // need to ensure deletion of this object updates curmem
+    (pImpl_->my_cache_).erase(key);
 }
 
 Cache::index_type Cache::space_used() const
 {
-    // Code Needed
+    return pImpl_->my_curmem_;
 }
