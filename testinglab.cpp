@@ -13,7 +13,7 @@ struct Cache::Impl
 
     Impl(index_type maxmem,
         evictor_type evictor,
-        hash_func hasher) : maxmem_(maxmem), evictor_(evictor), hasher_(hasher), memused_(0)
+        hash_func hasher) : maxmem_(maxmem), evictor_(evictor), hasher_(hasher), memused_(0), my_cache_(std::unordered_map<Cache::key_type,Cache::val_type>;)
     {
         my_cache_ = std::unordered_map<Cache::key_type,Cache::val_type>;
     }
