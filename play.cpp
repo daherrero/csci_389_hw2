@@ -1,26 +1,24 @@
-#include <iostream>     // std::cout
-#include <tuple>        // std::tuple, std::get, std::tie, std::ignore
 
-int main ()
+#include <iostream>
+#include <unordered_map>
+#include <string>
+ 
+int main()
 {
-  std::tuple<int,char> foo (10,'x');
-  auto bar = std::make_tuple ("test", 3.1, 14, 'y');
-
-  std::get<2>(bar) = 100;                                    // access element
-
-  int myint; char mychar;
-
-  std::tie (myint, mychar) = foo;                            // unpack elements
-  std::tie (std::ignore, std::ignore, myint, mychar) = bar;  // unpack (with ignore)
-
-  mychar = std::get<3>(bar);
-
-  std::get<0>(foo) = std::get<2>(bar);
-  std::get<1>(foo) = mychar;
-
-  std::cout << "foo contains: ";
-  std::cout << std::get<0>(foo) << ' ';
-  std::cout << std::get<1>(foo) << '\n';
-
-  return 0;
+	// Create an empty unordered_map
+	std::unordered_map<std::string, int> wordMap;
+ 
+	// Insert Few elements in map
+	wordMap.insert( { "First", 1 });
+	wordMap.insert(	{ "Second", 2 });
+	wordMap.insert(	{ "Third", 3 });
+ 
+	// Overwrite value of an element
+	wordMap["Third"] = 8;
+ 
+	// Iterate Over the unordered_map and display elements
+	for (std::pair<std::string, int> element : wordMap)
+		std::cout << element.first << " :: " << element.second << std::endl;
+ 
+	return 0;
 }

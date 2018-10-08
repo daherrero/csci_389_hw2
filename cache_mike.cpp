@@ -5,9 +5,8 @@
 #include <unordered_map>
 #include <string>
 
-class Cache::Impl 
+struct Cache::Impl 
 {
-    public:
         std::unordered_map<key_type,val_type> my_cache_;
         static index_type my_maxmem_;
         evictor_type my_evictor_;
@@ -48,9 +47,12 @@ void Cache::set(key_type key, val_type val, index_type size)
 
 Cache::val_type Cache::get(key_type key, index_type& val_size) const
 {
+
+    // GET KEY GET VALUE RETURN VALUE AND WRITE INTO ADDRESS PASSED AS PARAMETER
     auto search = (pImpl_->my_cache_).find(key);
     if (search != (pImpl_->my_cache_).end()) {
-        return &(search->second);
+        val_type the_pointer =  &(search->second);
+        return the_pointer;
     } else {
         return NULL;
     }
