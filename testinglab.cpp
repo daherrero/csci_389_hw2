@@ -5,7 +5,7 @@
 struct Cache::Impl
 {
 
-    std::unordered_map<key_type,val_type> my_cache_;
+    std::unordered_map<std::string,void *> my_cache_;
     index_type maxmem_;
     evictor_type evictor_;
     hash_func hasher_;
@@ -15,7 +15,7 @@ struct Cache::Impl
         evictor_type evictor,
         hash_func hasher) : maxmem_(maxmem), evictor_(evictor), hasher_(hasher), memused_(0), my_cache_(std::unordered_map<Cache::key_type,Cache::val_type>;)
     {
-        my_cache_ = std::unordered_map<Cache::key_type,Cache::val_type>;
+        my_cache_ = std::unordered_map<std::string,void *>;
     }
 
     ~Impl() = default;
