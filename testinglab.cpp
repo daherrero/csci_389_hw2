@@ -1,5 +1,11 @@
 
 #include "cache_mike.hh"
+#include <iostream>
+#include <functional>
+#include <memory>
+#include <string>
+#include <unordered_map>
+#include <string>
 
 
 struct Cache::Impl
@@ -13,22 +19,55 @@ struct Cache::Impl
 
     Impl(index_type maxmem,
         evictor_type evictor,
-        hash_func hasher) : maxmem_(maxmem), evictor_(evictor), hasher_(hasher), memused_(0), my_cache_(std::unordered_map<Cache::key_type,Cache::val_type>;)
+        hash_func hasher) : maxmem_(maxmem), evictor_(evictor), hasher_(hasher), memused_(0)
     {
-        my_cache_ = std::unordered_map<std::string,void *>;
     }
 
     ~Impl() = default;
 
+    // Add a <key, value> pair to the cache.
+    // If key already exists, it will overwrite the old value.
+    // Both the key and the value are to be deep-copied (not just pointer copied).
+    // If maxmem capacity is exceeded, sufficient values will be removed
+    // from the cache to accomodate the new value.
     void set(key_type key, val_type val, index_type size)
     {
     }
+
+    // Retrieve a pointer to the value associated with key in the cache,
+    // or NULL if not found.
+    // Sets the actual size of the returned value (in bytes) in val_size.
     val_type get(key_type key, index_type& val_size) const
     {
+        auto search = (my_cache_).find(key);
+        if (search != (my_cache_).end()) {
+            // Update value stored in val_size if its in the cache.
+            val_size = (uint32_t)sizeof(search->second);
+            
+            // Return pointer to the value.
+            val_type point_to_val = &(search->second);
+            return point_to_val;
+        } else {
+            return NULL;
+        }
     }
+
+    // Delete an object from the cache, if it's still there
     void del(key_type key)
     {
+        index_type val_size = 0; 
+        get(key,val_size);
+        // NOT SURE IF THIS WORKS. SHOULD UPDATE VAL_SIZE...
+        std::cout << val_size << std::endl;
+        if (val_size != 0)
+        {
+            memused_ -= val_size;
+        }
+        my_cache_.erase(key);
+        // Ensure this subtracts the size of key's value from memused_
     }
+
+    // Returns the amount of memory used by all cache values (not keys).
     index_type space_used() const
     {
         return memused_;
