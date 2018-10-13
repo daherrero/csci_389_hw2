@@ -1,11 +1,10 @@
-#ifndef CACHE_MIKE_HH
-#define CACHE_MIKE_HH
 
 /*
  * Interface for a generic cache object.
  * Data is given as blobs (void *) of a given size,
  * and indexed by a string key.
  */
+#pragma
 
 #include <functional>
 #include <memory>
@@ -57,5 +56,3 @@ class Cache {
   // Compute the total amount of memory used up by all cache values (not keys)
   index_type space_used() const;
 };
-
-#endif

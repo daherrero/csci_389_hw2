@@ -6,12 +6,12 @@
 #include <string>
 #include <unordered_map>
 #include <string>
-
+#pragma
 
 struct Cache::Impl
 {
 
-    std::unordered_map<std::string,void *> my_cache_;
+    std::unordered_map<std::string,const void *> my_cache_;
     index_type maxmem_;
     evictor_type evictor_;
     hash_func hasher_;
@@ -32,6 +32,18 @@ struct Cache::Impl
     // from the cache to accomodate the new value.
     void set(key_type key, val_type val, index_type size)
     {
+        if ((memused_ + size) <= maxmem_)
+        {
+            my_cache_.insert_or_assign(key,val);
+            memused_ += size;
+            return;
+        } else {
+        while ((memused_ + size) >= maxmem_)
+            evictor();
+        }
+        my_cache_.insert_or_assign(key,val);
+        memused_ += size;
+        return;
     }
 
     // Retrieve a pointer to the value associated with key in the cache,
@@ -59,18 +71,25 @@ struct Cache::Impl
         get(key,val_size);
         // NOT SURE IF THIS WORKS. SHOULD UPDATE VAL_SIZE...
         std::cout << val_size << std::endl;
+        std::cout << memused_ << std::endl;
+        // Reduce the size of memused_appropriately 
         if (val_size != 0)
         {
             memused_ -= val_size;
         }
+        std::cout << memused_ << std::endl;
         my_cache_.erase(key);
-        // Ensure this subtracts the size of key's value from memused_
     }
 
     // Returns the amount of memory used by all cache values (not keys).
     index_type space_used() const
     {
         return memused_;
+    }
+
+    void evictor()
+    {
+
     }
 };
 
@@ -114,5 +133,5 @@ void Cache::del(key_type key)
 // Compute the total amount of memory used up by all cache values (not keys)
 Cache::index_type Cache::space_used() const
 {
-    return pImpl_->space_used;
+    return pImpl_->space_used();
 }

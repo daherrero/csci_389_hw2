@@ -1,19 +1,30 @@
-#include "cache_mike.hpp"
+#include "cache_mike.hh"
 #include <iostream>
+#pragma
 
 int main()
 {
     Cache::index_type indext = 2;
-    Cache new_cache(2);
-    int *ptr1, *ptr2, val1, val2;
-    Cache::index_type * index_point = &indext;
-    val1 = 0;
-    val2 = 1;
-    ptr1 = &val1;
-    ptr2 = &val2;
-    new_cache.set("a",ptr1,1);
-    Cache::val_type get_val = new_cache.get("a",indext);
-    int *intPtr = static_cast<int*>(get_val);
-    std::cout << *intPtr << std::endl; 
-    return 0;
+    Cache new_cache(1000);
+    u_int32_t used = new_cache.space_used();
+    std::cout << used << "\n";
+    
+    // Insert key, value
+    u_int32_t const val = 400;
+    Cache::val_type point = &val;
+    u_int32_t size = sizeof(val);
+    new_cache.set("key1",point,size);
+    u_int32_t memused = new_cache.space_used();
+    std::cout <<memused << " memused"<< '\n';
+
+    // Get the value
+    Cache::index_type sized;
+    Cache::val_type thepoint= new_cache.get("key1",sized);
+    const uint32_t& theval = *(static_cast<const u_int32_t*>(thepoint));
+    std::cout << theval << "the value"<< '\n';
+
+    // Delete a key
+    new_cache.del("key1");
+    memused = new_cache.space_used();
+    std::cout <<memused << " memused"<< '\n';
 }
