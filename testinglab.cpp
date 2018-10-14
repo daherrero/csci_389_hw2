@@ -52,12 +52,14 @@ struct Cache::Impl
     val_type get(key_type key, index_type& val_size) const
     {
         auto search = (my_cache_).find(key);
-        if (search != (my_cache_).end()) {
+        
+        if (search != (my_cache_).end()) 
+        {    
             // Update value stored in val_size if its in the cache.
             val_size = (uint32_t)sizeof(search->second);
             
             // Return pointer to the value.
-            val_type point_to_val = &(search->second);
+            val_type point_to_val = search->second;
             return point_to_val;
         } else {
             return NULL;
@@ -68,16 +70,18 @@ struct Cache::Impl
     void del(key_type key)
     {
         index_type val_size = 0; 
-        get(key,val_size);
-        // NOT SURE IF THIS WORKS. SHOULD UPDATE VAL_SIZE...
-        std::cout << val_size << std::endl;
-        std::cout << memused_ << std::endl;
+        val_type is_in = get(key,val_size);
+
+        if (is_in == NULL)
+        {
+            std::cout << "not in \n";
+            return;
+        }
         // Reduce the size of memused_appropriately 
         if (val_size != 0)
         {
             memused_ -= val_size;
         }
-        std::cout << memused_ << std::endl;
         my_cache_.erase(key);
     }
 
