@@ -27,11 +27,18 @@ int main()
     new_cache.del("key0");
     new_cache.del("key1");
     u_int32_t memused1 = new_cache.space_used();
-    std::cout <<memused1 << " memused after del"<< '\n';
+    std::cout <<memused1 << " memused after del "<< '\n';
 }
 
 void testSet()
 {
+    // Make a cache large enough to hold 2 values;
+    Cache test_cache(16);
+    
+    const std::string key1 = "key1";
+    const std::string key2 = "key2";
+    const std::string key3 = "key3";
+
     u_int32_t const val1 = 1;
     u_int32_t const val2 = 2;
     u_int32_t const val3 = 3;
@@ -44,5 +51,14 @@ void testSet()
     
     u_int32_t memused = new_cache.space_used();
     std::cout << "Current memory in use: " << memused << '\n';
-    
+    std::cout << "Inserting key: " <<  << '\n';    
+    u_int32_t size = sizeof(point1);
+    new_cache.set("key1",point1,size);
+    new_cache.set("key2",point2,size);
+
+    std::cout << "Current memory in use: " << memused << '\n';
+
+
+
+
 }

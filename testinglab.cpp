@@ -93,7 +93,8 @@ struct Cache::Impl
 
     void evictor()
     {
-
+        auto first = my_cache_.begin();
+        del(first->first);
     }
 };
 
