@@ -21,6 +21,7 @@ struct Cache::Impl
         evictor_type evictor,
         hash_func hasher) : maxmem_(maxmem), evictor_(evictor), hasher_(hasher), memused_(0)
     {
+        
     }
 
     ~Impl() = default;

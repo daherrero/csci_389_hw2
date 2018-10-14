@@ -51,7 +51,8 @@ void testSet()
     
     u_int32_t memused = new_cache.space_used();
     std::cout << "Current memory in use: " << memused << '\n';
-    std::cout << "Inserting key: " <<  << '\n';    
+    std::cout << "Inserting key,value: (" << key1 << val1 << ")"<<'\n'; 
+     std::cout << "Inserting key,value: (" << key2 << val2 << ")"<<'\n';       
     u_int32_t size = sizeof(point1);
     new_cache.set("key1",point1,size);
     new_cache.set("key2",point2,size);
