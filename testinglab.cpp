@@ -8,23 +8,59 @@
 #include <string>
 #pragma
 
+using key_equality = std::function<bool(Cache::key_type,Cache::key_type)>;
+
+// This is a universal hash function adapted from:
+// https://en.wikipedia.org/wiki/Universal_hashing and
+// djb2 from http://www.cse.yorku.ca/~oz/hash.html
+struct DefaultHash 
+{
+    u_int32_t operator()(const Cache::key_type & key) const
+    {
+        // Initialize p to be large prime number
+        u_int32_t p = 5381;
+        // Loop over each character of key
+        for (auto letter : key)
+        {
+            // Bitshift the prime number p, add it to that result
+            // add the ASCII value of the letter to that
+            p = ((p << 5) + p) + letter;
+        }
+        return p;
+    }  
+};
+
+struct key_equals
+{
+    bool operator()(const Cache::key_type & key1, const Cache::key_type & key2) const
+    {
+        return !(key1.compare(key2));
+    }
+};
+
+typedef std::unordered_map<std::string, Cache::val_type, Cache::hash_func, key_equality> MyMap;
+
+
 struct Cache::Impl
 {
 
-    std::unordered_map<std::string,const void *> my_cache_;
     index_type maxmem_;
     evictor_type evictor_;
     hash_func hasher_;
     index_type memused_;
+    index_type items_in;
 
     Impl(index_type maxmem,
         evictor_type evictor,
-        hash_func hasher) : maxmem_(maxmem), evictor_(evictor), hasher_(hasher), memused_(0)
+        hash_func hasher) : maxmem_(maxmem), evictor_(evictor), hasher_(hasher = DefaultHash()), memused_(0)
     {
-        
+
     }
+    MyMap my_cache_(hasher_(),key_equals());
+
 
     ~Impl() = default;
+
 
     // Add a <key, value> pair to the cache.
     // If key already exists, it will overwrite the old value.
