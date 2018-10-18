@@ -106,7 +106,6 @@ struct Cache::Impl
 
         if (is_in == NULL)
         {
-            std::cout << "not in \n";
             return;
         }
         // Reduce the size of memused_appropriately 
