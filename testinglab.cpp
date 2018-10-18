@@ -30,34 +30,26 @@ struct DefaultHash
     }  
 };
 
-struct key_equals
-{
-    bool operator()(const Cache::key_type & key1, const Cache::key_type & key2) const
-    {
-        return !(key1.compare(key2));
-    }
-};
 
-typedef std::unordered_map<std::string, Cache::val_type, Cache::hash_func, key_equality> MyMap;
+
 
 
 struct Cache::Impl
 {
 
+    
     index_type maxmem_;
     evictor_type evictor_;
     hash_func hasher_;
     index_type memused_;
-    index_type items_in;
-
+    index_type items_in = 0;
     Impl(index_type maxmem,
         evictor_type evictor,
-        hash_func hasher) : maxmem_(maxmem), evictor_(evictor), hasher_(hasher = DefaultHash()), memused_(0)
+        hash_func hasher = DefaultHash()) : maxmem_(maxmem), evictor_(evictor), hasher_(hasher), memused_(0)
     {
-
+    
     }
-    MyMap my_cache_(hasher_(),key_equals());
-
+    std::unordered_map<key_type,val_type,DefaultHash> my_cache_;
 
     ~Impl() = default;
 
