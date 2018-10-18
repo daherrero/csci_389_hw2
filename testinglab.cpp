@@ -44,12 +44,12 @@ struct Cache::Impl
     index_type memused_;
     index_type items_in_;
     float max_load_;
+     std::unordered_map<key_type,val_type,DefaultHash> my_cache_;
     Impl(index_type maxmem,
         evictor_type evictor,
         hash_func hasher = DefaultHash()) : maxmem_(maxmem), evictor_(evictor), hasher_(hasher), memused_(0), 
         items_in_(0), max_load_(.5)
     {
-        std::unordered_map<key_type,val_type,DefaultHash> my_cache_;
         my_cache_.max_load_factor(max_load_);
     }
 
