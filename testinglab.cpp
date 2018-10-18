@@ -50,6 +50,7 @@ struct Cache::Impl
         hash_func hasher = DefaultHash()) : maxmem_(maxmem), evictor_(evictor), hasher_(hasher), memused_(0), 
         items_in_(0), max_load_(.5), my_cache_(0,hasher)
     {
+        // Set max load factor for my_cache_ to .5
         my_cache_.max_load_factor(max_load_);
     }
 

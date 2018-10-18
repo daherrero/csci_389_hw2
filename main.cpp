@@ -49,13 +49,13 @@ void testSet()
     point2 = &val2;
     point3 = &val3;
     
-    u_int32_t memused = new_cache.space_used();
+    u_int32_t memused = test_cache.space_used();
     std::cout << "Current memory in use: " << memused << '\n';
     std::cout << "Inserting key,value: (" << key1 << val1 << ")"<<'\n'; 
      std::cout << "Inserting key,value: (" << key2 << val2 << ")"<<'\n';       
     u_int32_t size = sizeof(point1);
-    new_cache.set("key1",point1,size);
-    new_cache.set("key2",point2,size);
+    test_cache.set("key1",point1,size);
+    test_cache.set("key2",point2,size);
 
     std::cout << "Current memory in use: " << memused << '\n';
 
