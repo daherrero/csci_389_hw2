@@ -6,6 +6,7 @@
 #include <string>
 #include <unordered_map>
 #include <string>
+#include <list>
 #pragma
 
 using key_equality = std::function<bool(Cache::key_type,Cache::key_type)>;
@@ -45,10 +46,12 @@ struct Cache::Impl
     index_type items_in_;
     float max_load_;
     std::unordered_map<key_type,val_type,hash_func> my_cache_;
+    std::list<std::string> key_list_;
+    std::string evictor_type_;
     Impl(index_type maxmem,
         evictor_type evictor,
         hash_func hasher = DefaultHash()) : maxmem_(maxmem), evictor_(evictor), hasher_(hasher), memused_(0), 
-        items_in_(0), max_load_(.5), my_cache_(0,hasher)
+        items_in_(0), max_load_(.5), my_cache_(0,hasher), key_list_(maxmem), evictor_type_("fifo")
     {
         // Set max load factor for my_cache_ to .5
         my_cache_.max_load_factor(max_load_);
@@ -68,13 +71,15 @@ struct Cache::Impl
         {
             my_cache_.insert_or_assign(key,val);
             memused_ += size;
+            evictor(evictor_type_, "include", key);
             return;
         } else {
         while ((memused_ + size) >= maxmem_)
-            evictor();
+            evictor(evictor_type_, "evict");
         }
         my_cache_.insert_or_assign(key,val);
         memused_ += size;
+        evictor(evictor_type_, "include", key);
         return;
     }
 
@@ -89,7 +94,10 @@ struct Cache::Impl
         {    
             // Update value stored in val_size if its in the cache.
             val_size = (uint32_t)sizeof(search->second);
-            
+
+            // Update key list for evictor
+            evictor(evictor_type_, "update", key);
+
             // Return pointer to the value.
             val_type point_to_val = search->second;
             return point_to_val;
@@ -114,6 +122,7 @@ struct Cache::Impl
             memused_ -= val_size;
         }
         my_cache_.erase(key);
+        evictor(evictor_type_, "erase", key);
     }
 
     // Returns the amount of memory used by all cache values (not keys).
@@ -122,10 +131,46 @@ struct Cache::Impl
         return memused_;
     }
 
-    void evictor()
-    {
-        auto first = my_cache_.begin();
-        del(first->first);
+    void evictor(std::string evictor_type = NULL, std::string action = NULL, key_type key = NULL) {
+        if (evictor_type == "fifo") {
+            fifo_evictor(action, key);
+        } else if (evictor_type == "lru"){
+            lru_evictor(action, key);
+        } else {
+            auto first = my_cache_.begin();
+            del(first->first);
+        }
+    }
+
+    void fifo_evictor(std::string action, key_type key) {
+        if (action == "include") {
+            key_list_.push_front(key);
+        } else if (action == "delete") {
+            key_list_.remove(key);
+        } else if (action == "evict") {
+            std::string fifo_key = key_list_.back();
+            key_list_.pop_back();
+            del(fifo_key);
+        } else {
+            return;
+        }
+    }
+
+    void lru_evictor(std::string action, key_type key) {
+        if (action == "include") {
+            key_list_.push_front(key);
+        } else if (action == "delete") {
+            key_list_.remove(key);
+        } else if (action == "update") {
+            key_list_.remove(key);
+            key_list_.push_front(key);
+        } else if (action == "evict") {
+            std::string lru_key = key_list_.back();
+            key_list_.pop_back();
+            del(lru_key);
+        } else {
+            return;
+        }
     }
 };
 
