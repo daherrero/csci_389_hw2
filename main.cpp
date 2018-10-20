@@ -66,7 +66,43 @@ void testSet()
     memused = test_cache.space_used();
     std::cout << "Current memory in use: " << memused << '\n';
 
+    // Initialize size address
+    Cache::index_type get_size = 0;
 
+    // Changing key values
+    std::cout << "Swap of values of key1 and key2.";
+    test_cache.set("key1",point2,size);
+    test_cache.set("key2",point1,size);
+    for (auto i : test_cache)
+        std::cout << "[" i.first << ", " << *(i.second) << "] ";
 
+    // Accessing invalid key
+    std::cout << "Accessing invalid key";
+    if (test_cache.get("key4", get_size) == NULL) {
+        std::cout << "Key \'key 4 \' is not in the cache";
+    }
 
+    // FIFO evictor test
+    test_cache.set("key3", point3, size);
+    std::cout << "Inserting key,value: (" << key3 << val3 << ")"<<'\n';
+    for (auto i : test_cache)
+        std::cout << "[" i.first << ", " << *(i.second) << "] ";
+    if (test_cache.get(key1, get_size) == NULL) {
+        std::cout << "FIFO evictor is working."
+    }
+
+    // LRU evictor test (need to change evictor type in testinglab)
+    // Access key 1 to make it last used.
+    Cache::val_type pointer_to_get = test_cache.get(key1, &get_size);
+    std::cout << "Accessing key,value: (" << key1 << *pointer_to_get << ")"<<'\n';
+
+    // Sets a new key, evicting the key with the most time unaccessed.
+    test_cache.set("key3", point3, size);
+    std::cout << "Inserting key,value: (" << key3 << val3 << ")"<<'\n';
+    std::cout << "Cache elements: " << '\n';
+    for (auto i : test_cache)
+        std::cout << "[" i.first << ", " << *(i.second) << "] ";
+    if (test_cache.get(key2, get_size) == NULL) {
+        std::cout << "LRU evictor is working."
+    }
 }
