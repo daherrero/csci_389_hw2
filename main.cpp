@@ -33,6 +33,7 @@ int main()
 void testSet()
 {
     // Make a cache large enough to hold 2 values;
+    // (size of value is 8 bytes, size of void pointer)
     Cache test_cache(16);
     
     // Initialize some keys
@@ -65,6 +66,7 @@ void testSet()
 
     memused = test_cache.space_used();
     std::cout << "Current memory in use: " << memused << '\n';
+    assert(memused==size);
 
 
 
