@@ -72,6 +72,7 @@ struct Cache::Impl
             my_cache_.insert_or_assign(key,val);
             memused_ += size;
             evictor(evictor_type_, "include", key);
+            assert(my_cache_.load_factor() <= my_cache_.max_load_factor());
             return;
         } else {
         while ((memused_ + size) >= maxmem_)
@@ -80,6 +81,7 @@ struct Cache::Impl
         my_cache_.insert_or_assign(key,val);
         memused_ += size;
         evictor(evictor_type_, "include", key);
+        assert(my_cache_.load_factor() <= my_cache_.max_load_factor());
         return;
     }
 
@@ -114,6 +116,7 @@ struct Cache::Impl
 
         if (is_in == NULL)
         {
+            std::cout << "Key " << key << "not in cache. \n";
             return;
         }
         // Reduce the size of memused_appropriately 
