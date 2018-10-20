@@ -6,7 +6,7 @@ We've implemented a universal hashing function for strings from the link(s):
 https://en.wikipedia.org/wiki/Universal_hashing and
 http://www.cse.yorku.ca/~oz/hash.html
 
-It takes some prime number that is large relative to the length of the string, bit shifts it by 5, and adds each character to that result, looping over all characters in the key, then returns the resulting hash.
+It takes some prime number that is large relative to the length of the string, bit shifts it by 5, and adds a character to that result, looping over all characters in the key, then returns the resulting hash.
 
 #### Problem 4
 
