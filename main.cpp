@@ -77,9 +77,18 @@ void testSet()
 
     // Changing key values
     printf("\nSWAP OF VALUES OF key1 and key2\n-------------------------------\n");
-
-    //test_cache.set("key1",point2,size);
-    //test_cache.set("key2",point1,size);
+    test_cache.set("key1", point2, size);
+    test_cache.set("key2", point1, size);
+    printf("Elements in the cache: ");
+    for (std::list<std::string>::const_iterator i = list_of_keys.begin(); i != list_of_keys.end(); ++i) {
+        std::string key_to_check = i->c_str();
+        Cache::index_type sized;
+        if (test_cache.get(key_to_check, sized) != NULL) {
+            Cache::val_type thepoint = test_cache.get(key_to_check, sized);
+            const uint32_t &theval = *(static_cast<const u_int32_t *>(thepoint));
+            printf("[%s, %u] ", key_to_check.c_str(), theval);
+        }
+    }
     printf("Swapped \n");
 
     // Delete a key
@@ -114,9 +123,6 @@ void testSet()
     printf("\nFIFO EVICTOR TEST\n-----------------\n");
     test_cache.set("key3", point3, size);
     printf("Inserting (key, value): (%s, %u)\n", key3.c_str(), val3);
-    if (test_cache.get(key1, get_size) == NULL) {
-        printf("FIFO evictor is working. \n");
-    }
     printf("Elements in the cache: ");
     for(std::list<std::string>::const_iterator i = list_of_keys.begin(); i != list_of_keys.end(); ++i)
     {
@@ -127,6 +133,10 @@ void testSet()
             const uint32_t& theval = *(static_cast<const u_int32_t*>(thepoint));
             printf("[%s, %u] ", key_to_check.c_str(), theval);
         }
+    }
+    std::string key_to_check = "key1";
+    if (test_cache.get(key_to_check, sized) == NULL) {
+        printf("\nLRU evictor is working");
     }
     //*/
     /*
