@@ -1,14 +1,12 @@
 #include "testinglab.cpp"
-#include <iostream>
-#include <cassert>
-#include <list>
+
 #pragma
-void testSet()
-{
+
+void testSet() {
     // Make a cache large enough to hold 2 values;
     // (size of value is 8 bytes, size of void pointer)
     Cache test_cache(16);
-    
+
     // Initialize some keys
     const std::string key1 = "one";
     const std::string key2 = "two";
@@ -16,7 +14,7 @@ void testSet()
     const std::string key4 = "four";
 
     // Initialize list of keys
-    std::list<std::string> list_of_keys({"key1", "key2", "key3", "key4"});
+    std::list <std::string> list_of_keys({"key1", "key2", "key3", "key4"});
 
     // Initialize some values
     u_int32_t const val1 = 1;
@@ -39,20 +37,19 @@ void testSet()
     printf("Inserting (key, value): (%s, %u)\n", key2.c_str(), val2);
 
     u_int32_t size = sizeof(point1);
-    test_cache.set("key1",point1,size);
-    test_cache.set("key2",point2,size);
+    test_cache.set("key1", point1, size);
+    test_cache.set("key2", point2, size);
 
     memused = test_cache.space_used();
     printf("Current memory in use: %u \n", memused);
-    assert(memused==(size*2));
+    assert(memused == (size * 2));
     printf("Elements in the cache: ");
-    for(std::list<std::string>::const_iterator i = list_of_keys.begin(); i != list_of_keys.end(); ++i)
-    {
+    for (std::list<std::string>::const_iterator i = list_of_keys.begin(); i != list_of_keys.end(); ++i) {
         std::string key_to_check = i->c_str();
         Cache::index_type sized;
         if (test_cache.get(key_to_check, sized) != NULL) {
-            Cache::val_type thepoint= test_cache.get(key_to_check, sized);
-            const uint32_t& theval = *(static_cast<const u_int32_t*>(thepoint));
+            Cache::val_type thepoint = test_cache.get(key_to_check, sized);
+            const uint32_t &theval = *(static_cast<const u_int32_t *>(thepoint));
             printf("[%s, %u] ", key_to_check.c_str(), theval);
         }
     }
@@ -62,8 +59,8 @@ void testSet()
     printf("\nTEST FOR get FUNCTION\n---------------------\n");
 
     Cache::index_type sized;
-    Cache::val_type thepoint= test_cache.get("key1",sized);
-    const uint32_t& theval = *(static_cast<const u_int32_t*>(thepoint));
+    Cache::val_type thepoint = test_cache.get("key1", sized);
+    const uint32_t &theval = *(static_cast<const u_int32_t *>(thepoint));
     printf("Getting value of key1. The value is: %u\n", theval);
 
     // Ensure resizing works (Trivial, already implemented in unordered map)
@@ -101,13 +98,12 @@ void testSet()
     u_int32_t memused1 = test_cache.space_used();
     printf("%u memused after del \n", memused1);
     printf("Elements in cache: ");
-    for(std::list<std::string>::const_iterator i = list_of_keys.begin(); i != list_of_keys.end(); ++i)
-    {
+    for (std::list<std::string>::const_iterator i = list_of_keys.begin(); i != list_of_keys.end(); ++i) {
         std::string key_to_check = i->c_str();
         Cache::index_type sized;
         if (test_cache.get(key_to_check, sized) != NULL) {
-            Cache::val_type thepoint= test_cache.get(key_to_check, sized);
-            const uint32_t& theval = *(static_cast<const u_int32_t*>(thepoint));
+            Cache::val_type thepoint = test_cache.get(key_to_check, sized);
+            const uint32_t &theval = *(static_cast<const u_int32_t *>(thepoint));
             printf("[%s, %u] ", key_to_check.c_str(), theval);
         }
     }
@@ -121,31 +117,33 @@ void testSet()
     ///*
     // FIFO evictor test
     printf("\nFIFO EVICTOR TEST\n-----------------\n");
+
+    // Sets a new key, evicting the first key inserted.
     test_cache.set("key3", point3, size);
     printf("Inserting (key, value): (%s, %u)\n", key3.c_str(), val3);
     printf("Elements in the cache: ");
-    for(std::list<std::string>::const_iterator i = list_of_keys.begin(); i != list_of_keys.end(); ++i)
-    {
+    for (std::list<std::string>::const_iterator i = list_of_keys.begin(); i != list_of_keys.end(); ++i) {
         std::string key_to_check = i->c_str();
         Cache::index_type sized;
         if (test_cache.get(key_to_check, sized) != NULL) {
-            Cache::val_type thepoint= test_cache.get(key_to_check, sized);
-            const uint32_t& theval = *(static_cast<const u_int32_t*>(thepoint));
+            Cache::val_type thepoint = test_cache.get(key_to_check, sized);
+            const uint32_t &theval = *(static_cast<const u_int32_t *>(thepoint));
             printf("[%s, %u] ", key_to_check.c_str(), theval);
         }
     }
     std::string key_to_check = "key1";
     if (test_cache.get(key_to_check, sized) == NULL) {
-        printf("\nLRU evictor is working");
+        printf("\nFIFO evictor is working");
     }
     //*/
     /*
     // LRU evictor test (need to change evictor type in testinglab)
-    // Access key 1 to make it last used.
     printf("\nLRU EVICTOR TEST\n----------------\n");
 
+    // Sets key 1 (deleted in previous tests).
     test_cache.set("key1", point1, size);
 
+    // Access key 2 to make it last used.
     std::string key_to_check = "key2";
     if (test_cache.get(key_to_check, sized) != NULL) {
         Cache::val_type thepoint = test_cache.get(key_to_check, sized);
@@ -158,17 +156,17 @@ void testSet()
     printf("Inserting (key, value): (%s, %u)\n", key3.c_str(), val3);
 
     printf("Elements in the cache: ");
-    for(std::list<std::string>::const_iterator i = list_of_keys.begin(); i != list_of_keys.end(); ++i)
-    {
+    for (std::list<std::string>::const_iterator i = list_of_keys.begin(); i != list_of_keys.end(); ++i) {
         std::string key_to_check = i->c_str();
         Cache::index_type sized;
         if (test_cache.get(key_to_check, sized) != NULL) {
-            Cache::val_type thepoint= test_cache.get(key_to_check, sized);
-            const uint32_t& theval = *(static_cast<const u_int32_t*>(thepoint));
+            Cache::val_type thepoint = test_cache.get(key_to_check, sized);
+            const uint32_t &theval = *(static_cast<const u_int32_t *>(thepoint));
             printf("[%s, %u] ", key_to_check.c_str(), theval);
         }
     }
 
+    // Checks if key1 is evicted (should be as the last acessed was key2).
     key_to_check = "key1";
     if (test_cache.get(key_to_check, sized) == NULL) {
         printf("\nLRU evictor is working");
@@ -176,8 +174,7 @@ void testSet()
     */
 }
 
-int main()
-{
+int main() {
     testSet();
     std::cout << std::endl;
     return 0;
