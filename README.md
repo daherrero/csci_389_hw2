@@ -1,6 +1,10 @@
 ### CS389 HW2: Hash it out.
 
-#### Important
+####
+DAVID HERRERO
+MICHAEL KALANGE
+
+#### IMPORTANT
 
 Compile using:
 
