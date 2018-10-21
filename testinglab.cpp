@@ -7,6 +7,8 @@
 #include <unordered_map>
 #include <string>
 #include <list>
+#include <cassert>
+#include <algorithm>
 #pragma
 
 using key_equality = std::function<bool(Cache::key_type,Cache::key_type)>;
@@ -75,8 +77,8 @@ struct Cache::Impl
             assert(my_cache_.load_factor() <= my_cache_.max_load_factor());
             return;
         } else {
-        while ((memused_ + size) >= maxmem_)
-            evictor(evictor_type_, "evict");
+        while ((memused_ + size) > maxmem_)
+            evictor(evictor_type_, "evict", key);
         }
         my_cache_.insert_or_assign(key,val);
         memused_ += size;
@@ -88,7 +90,7 @@ struct Cache::Impl
     // Retrieve a pointer to the value associated with key in the cache,
     // or NULL if not found.
     // Sets the actual size of the returned value (in bytes) in val_size.
-    val_type get(key_type key, index_type& val_size) const
+    val_type get(key_type key, index_type& val_size)
     {
         auto search = (my_cache_).find(key);
         
@@ -116,7 +118,6 @@ struct Cache::Impl
 
         if (is_in == NULL)
         {
-            std::cout << "Key " << key << "not in cache. \n";
             return;
         }
         // Reduce the size of memused_appropriately 
@@ -147,11 +148,16 @@ struct Cache::Impl
 
     void fifo_evictor(std::string action, key_type key) {
         if (action == "include") {
-            key_list_.push_front(key);
+            if ((std::find(key_list_.begin(), key_list_.end(), key) != key_list_.end())) {
+                key_list_.remove(key);
+                key_list_.push_front(key);
+            } else {
+                key_list_.push_front(key);
+            }
         } else if (action == "delete") {
             key_list_.remove(key);
         } else if (action == "evict") {
-            std::string fifo_key = key_list_.back();
+            std::string fifo_key = key_list_.back().c_str();
             key_list_.pop_back();
             del(fifo_key);
         } else {
@@ -161,7 +167,12 @@ struct Cache::Impl
 
     void lru_evictor(std::string action, key_type key) {
         if (action == "include") {
-            key_list_.push_front(key);
+            if ((std::find(key_list_.begin(), key_list_.end(), key) != key_list_.end())) {
+                key_list_.remove(key);
+                key_list_.push_front(key);
+            } else {
+                key_list_.push_front(key);
+            }
         } else if (action == "delete") {
             key_list_.remove(key);
         } else if (action == "update") {
