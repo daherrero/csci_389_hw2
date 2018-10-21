@@ -1,5 +1,11 @@
-README.md
 ### CS389 HW2: Hash it out.
+
+#### Important
+
+Compile using:
+
+`g++ -std=c++17 main.cpp`
+
 #### Part 2: Testing
 
 To test the two different evictors, `evictor_type_` must be changed in the `Impl` declaration. For FIFO evictor, use `"fifo"` and for LRU evictor, use `"lru"`. Also, uncomment the consequent evictor test in main.cpp and comment the other.
